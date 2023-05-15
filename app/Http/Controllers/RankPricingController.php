@@ -94,7 +94,7 @@ class RankPricingController extends Controller
     $data = json_encode(array(
         "title" => "Boost",
         "product_id" => null,
-        "gateway" => "STRIPE",
+        "gateway" => null,
         "value" => $totalAmount,
         "currency" => "USD",
         "quantity" => 1,
@@ -115,6 +115,7 @@ class RankPricingController extends Controller
     ));
      $response = curl_exec($curl);
     curl_close($curl);
+ //   print_r($response);
     $finalUrl = strval(json_decode($response)->data->url);
     return Redirect::to($finalUrl);
      header("Location: $finalUrl"); 
