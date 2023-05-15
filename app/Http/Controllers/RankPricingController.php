@@ -84,13 +84,14 @@ class RankPricingController extends Controller
         $orders->save();
     }
     public function payments(Request $request){
-        $secretKey = SELIX_SECRET_KEY;
-        print_r($secretKey);exit;
+       $SECRET_KEY = env('SELIX_SECRET_KEY');
+       $url = env('SELIX_PAYMENT_LINK');
+    //    print_r($SECRET_KEY);exit;
         $currency = $request->input('currency');
         $totalAmount = $request->input('totalAmt');
        
         $mail = 'test@gmail.com';
-    $url = "https://dev.sellix.io/v1/payments";
+    // $url = "https://dev.sellix.io/v1/payments";
 
     $data = json_encode(array(
         "title" => "Boost",
@@ -112,7 +113,7 @@ class RankPricingController extends Controller
      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
        // "Content-type: application/x-www-form-urlencoded\r\n" .
-        'Authorization: Bearer ' . 'm8MSpdIIDnKbJWUPFo5pkEwsNjwY4A4nElLfAyW1hoFULUrfxS5KFpyiGxOXIVXn'
+        'Authorization: Bearer ' . $SECRET_KEY
     ));
      $response = curl_exec($curl);
     curl_close($curl);
