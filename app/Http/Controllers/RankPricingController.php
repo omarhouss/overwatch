@@ -86,12 +86,10 @@ class RankPricingController extends Controller
     public function payments(Request $request){
        $SECRET_KEY = env('SELIX_SECRET_KEY');
        $url = env('SELIX_PAYMENT_LINK');
-    //    print_r($SECRET_KEY);exit;
-        $currency = $request->input('currency');
-        $totalAmount = $request->input('totalAmt');
-       
-        $mail = 'test@gmail.com';
-    // $url = "https://dev.sellix.io/v1/payments";
+       $return_url = env('SELIX_PAYMENT_RETURN_LINK');
+       $currency = $request->input('currency');
+       $totalAmount = $request->input('totalAmt');
+       $mail = 'test@gmail.com';
 
     $data = json_encode(array(
         "title" => "Boost",
@@ -102,7 +100,7 @@ class RankPricingController extends Controller
         "quantity" => 1,
         "email" => $mail,
         "white_label" => false,
-        "return_url" => "https://dev.sellix.io/v1/return" //not sure what this is supposed to do...
+        "return_url" => $return_url //not sure what this is supposed to do...
     ));
 
     $curl = curl_init($url);
