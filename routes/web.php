@@ -27,6 +27,9 @@ Route::get('/boost3', function () {
 Route::get('/boost4', function () {
     return view('boostpages.boost4');
 });
+Route::get('/sellix_thank_you', function () {
+    return view('boostpages.sellix_thank_you');
+});
 
 use App\Http\Controllers\RankPricingController;
 
@@ -37,11 +40,10 @@ Route::get('/orderdetails/{id}',[RankPricingController::class, 'orderdetail']);
 
 Route::post('/payments', [RankPricingController::class, 'payments'])->name('payments.request');
 
+Route::get('/sellix_webhook_response', [RankPricingController::class, 'sellix_webhook_response']);
 Route::get('/dashboard', [RankPricingController::class, 'index']);
 Route::get('/orders2', [RankPricingController::class, 'index2']);
 
 use App\Http\Controllers\PaymentController;
 
 Route::get('/payment', [PaymentController::class, 'createPayment'])->name('create-payment');
-
-

@@ -84,6 +84,25 @@ class RankPricingController extends Controller
         $orders->save();
     }
     public function payments(Request $request){
+
+        $payment_id = '#'.time();
+
+        $orders = new Order;
+        $orders->number = $payment_id;
+        $orders->rank = '';
+        $orders->currentrank = '';
+        $orders->desiredrank = '';
+        $orders->currentnumber = 0;
+        $orders->desirednumber = 0;
+        $orders->wins = 0;
+        $orders->platform = '';
+        $orders->role = '';
+        $orders->server = '';
+        $orders->service = '';
+        $orders->total_price = $request->input('totalAmt');
+        $orders->status = 0;
+        $orders->save();
+
        $SECRET_KEY = env('SELIX_SECRET_KEY');
        $url = env('SELIX_PAYMENT_LINK');
        $return_url = env('SELIX_PAYMENT_RETURN_LINK');
@@ -92,6 +111,7 @@ class RankPricingController extends Controller
        $mail = 'test@gmail.com';
 
     $data = json_encode(array(
+        "custom_fields" => array('payment_id'=>$payment_id),
         "title" => "Boost",
         "product_id" => null,
         "gateway" => null,
@@ -119,5 +139,20 @@ class RankPricingController extends Controller
     $finalUrl = strval(json_decode($response)->data->url);
     return Redirect::to($finalUrl);
      header("Location: $finalUrl"); 
+    }
+    public function sellix_webhook_response(){
+        $response_data_arr = file_get_contents('php://input');
+        $response = json_decode($response_data_arr,true);
+        $file = storage_path().'/logs/sellix_webhook.log';
+        ob_start();
+        echo '============================ '.date('Y-m-d h:i:s').' ============================'."\n";
+        print_r($response);
+        $res = ob_get_clean();
+        file_put_contents($file, $res, FILE_APPEND);
+        if(isset($response['event'])&&$response['event']=='order:paid'&&isset($response['data'])&&!empty($response['data'])&&is_array($response['data'])&&isset($response['data']['status'])&&$response['data']['status']=='COMPLETED'&&isset($response['data']['custom_fields']['payment_id'])){
+            $order = Order::where('number',$response['data']['custom_fields']['payment_id'])->first();
+            $order->status = 1;
+            $order->save();
+        }
     }
 }    
