@@ -422,8 +422,6 @@
 					style="width: 361px; border: 1px solid rgba(117, 112, 149, 0.2);"></span>
 			</div>
 		</section>
-		<form  method="POST" action="{{route('payments.request')}}" method="POST">
-			@csrf
 		<div style="margin-right: 0px;" id="box2" class="price-box">
 			<div class="price-content mt-4 lg:mr-[80px]">
 				<h3 class="text-[#E94A65] mt-6 font-[DM Sans] font-[600] sm:text-[16px] text-[12px]  leading-[20px]">
@@ -433,11 +431,10 @@
 				<div style="margin-top: 18px;" class="price-dollar space-x-4">
 					<h3 id="ordertoltal" class="font-[Rubik] font-[600] text-[40px] sm:text-[54px] leading-[66px] text-[#E94A65]">
 					</h3>
-					<input type="hidden" name="totalAmt" id="totalVal"/>
-					<select style="outline: none; " name="currency" id="sel"
+					<select style="outline: none; " name="" id="sel"
 						class="w-[63px] sm:w-[75px] h-[28px] text-[12px] sm:text-[1rem] font-[Inter] font-bold  bg-[#232236] text-[#ffff]  pl-3 rounded-[14px]">
-						<option class="font-[Inter] font-normal" value="USD">USD</option>
-						<option class="font-[Inter] font-normal" value="EUR"></option>
+						<option class="font-[Inter] font-normal" value="">USD</option>
+						<option class="font-[Inter] font-normal" value=""></option>
 						<option class="font-[Inter] font-normal" value="BTC"></option>
 						<option class="font-[Inter] font-normal" value=""></option>
 					</select>
@@ -496,7 +493,7 @@
 				</button>
 			</div>
 			<div id="purshase-now" class="purshase-now sm:w-[391px] w-[276px] h-[60px] mb-[33px]">
-				<button id="purchase" type="submit"  class="text-[#ffff] font-[Manrope] font-600 text-[18px] leading-[20px]">Purchase</button>
+				<button id="purchase" href="#" class="text-[#ffff] font-[Manrope] font-600 text-[18px] leading-[20px]">Purchase</button>
 			</div>
 			<div class="flex items-center space-x-4">
 				<span>
@@ -512,7 +509,6 @@
 					complection time: 2 days</p>
 			</div>
 		</div>
-		</form>
 		<section class=" mx-auto mb-[33px] mt-[16px]  sm:mb-[83px]" data-aos="fade-up">
 			<div class="">
 				<div class=" flex justify-center items-center">
@@ -780,11 +776,9 @@
 			const addonPrice = total* (addonPercentage / 100);
 			total += addonPrice;
 		}
-		
 		console.log(total);
 		const orderTotalElement = document.getElementById('ordertoltal');
 		orderTotalElement.textContent = '$' + total.toFixed(2);
-		document.getElementById("totalVal").value = total;
 	}
 	calculateTotalPrice();
 	[curentRank, currentNum, desireedRank, desirednum].forEach(element => {
@@ -850,7 +844,7 @@ platformButtons.forEach(button => {
 
       if (response.ok) {
         const order = await response.json();
-        alert('Order completed');
+        window.location.href = order;
       } else {
         console.error('Error:', response.statusText);
       }

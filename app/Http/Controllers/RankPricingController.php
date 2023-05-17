@@ -56,7 +56,8 @@ class RankPricingController extends Controller
             'selectedServer' => 'required|string',
         ]);
         $orders = new Order;
-        $orders->number = '#'.random_int(1000, 9999);
+        $payment_id = '#'.random_int(1000, 9999);
+        $orders->number = $payment_id;
         $orders->currentrank = $validatedData['currentrank'];
         $orders->desiredrank = $validatedData['desiredrank'];
         $orders->total_price = $validatedData['total_price'];
@@ -66,8 +67,44 @@ class RankPricingController extends Controller
         $orders->desirednumber = $validatedData['desiredNumber'];
         $orders->role = $validatedData['selectedRole'];
         $orders->server = $validatedData['selectedServer'];
+        $orders->rank = '';
+        $orders->wins = 0;
+        $orders->status = 0;
         $orders->save();
-        return response()->json($orders, 201);
+
+        $SECRET_KEY = env('SELIX_SECRET_KEY');
+       $url = env('SELIX_PAYMENT_LINK');
+       $return_url = env('SELIX_PAYMENT_RETURN_LINK');
+       $mail = 'test@gmail.com';
+
+       $data = json_encode(array(
+            "custom_fields" => array('payment_id'=>$payment_id),
+            "title" => "Boost",
+            "product_id" => null,
+            "gateway" => null,
+            "value" => $validatedData['total_price'],
+            "currency" => "USD",
+            "quantity" => 1,
+            "email" => $mail,
+            "white_label" => false,
+            "return_url" => $return_url //not sure what this is supposed to do...
+        ));
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+           // "Content-type: application/x-www-form-urlencoded\r\n" .
+            'Authorization: Bearer ' . $SECRET_KEY
+        ));
+         $response = curl_exec($curl);
+        curl_close($curl);
+     //   print_r($response);
+        $finalUrl = strval(json_decode($response)->data->url);
+        return response()->json($finalUrl, 201);
     }
     public function storeOrder3(Request $request)
     {
